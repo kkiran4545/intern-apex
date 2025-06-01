@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>task-1</title>
+        <style>
+            img {
+              width: auto;
+              height: 150px;
+            }
+            .cc{
+                padding: 20px;
+                margin: 2% auto;
+                background-color: rgba(0, 0, 0, 0.725);
+                border-radius: 10%;
+            }
+            p{
+                font-size: medium;
+                color: rgb(249, 229, 234);
+                font-weight: 200;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+           a{
+            color: seashell;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-weight: 400;
+           } 
+           #f{
+            border: 1px solid rgb(99, 11, 11);
+            background-color: aqua;
+            box-shadow: black;
+
+           }
+           h1{
+            background-color: chartreuse;
+           }
+           body{
+            padding: 20px;
+            margin: auto;
+            background-color: rgb(162, 176, 92);
+           }
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+        ul {
+            list-style-type: none;
+            margin: 3px auto;
+            padding: 1px;
+            display: flex;
+            justify-content: center;
+        }
+        li {
+            padding: 10px 20px;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+        li:hover {
+            background-color: #113b04;
+        }
+        .e{
+            display:none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-button" onclick="jj()">
+        <i class='bx  bx-dots-vertical-rounded'></i> 
+    </button>
+  <div class="e">
+         <a href="#">Home</a><br>
+         <a href="#">Contact</a><br>
+         <a href="#">About Us</a>      
+  </div>
+    <h1 style="text-align: center; color: brown; border:1px solid tomato; border-radius: 20%;">Welcome to my website</h1>
+    <nav >
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">About Us</a></li>
+        </ul>
+    </nav>
+        <div class="cc">
+            <h2 style="text-align: center; color: chartreuse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">This is my first webpage</h2>
+            <p>Join us on our journey to make a significant impact in the digital world. With ApexPlanet Software Pvt. Ltd.,
+             your business is poised for success, and your career is set on a path of continuous learning and
+            achievement.</p>
+            <a href="https://apexplanet.in/">Click me !</a>
+            <img src="https://apexplanet.in/wp-content/uploads/2023/08/apspl9-1536x571.png.webp">
+             <button id="f" onclick="k()">Toggle me</button>
+        </div>
+        <nav>
+    <i class='bx bx-menu-wider'></i>
+</nav>
+<script>
+        function k(){
+            alert("Hi! Welcome to Apexplanet")
+        }
+function jj(){
+    let menu = document.querySelector(".e");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+}
+     </script> 
+    </body>
+</html>
