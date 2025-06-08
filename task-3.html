@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareKart - Weather Checker</title>
+    <style>
+        body {
+            background: radial-gradient(circle, #2c4e6b00, #10730e);
+            margin: 2px auto;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        h1 {
+            color: black;
+            text-decoration: dotted;
+        }
+        .container {
+            width: 50%;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        input, button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .weather-display {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Check the Weather!</h1>
+    <div class="container">
+        <input type="text" placeholder="Enter a city name" id="cityInput">
+        <button id="checkWeather">Check Here</button>
+        <div class="weather-display">
+            <h3 id="weatherResult"></h3>
+            <p id="weatherDetails"></p>
+        </div>
+    </div>
+    <script>
+        document.getElementById("checkWeather").addEventListener("click", () => {
+            const city = document.getElementById("cityInput").value;
+            fetch(`http://api.weatherapi.com/v1/current.json?key=b42cbe3ddaee4821a7b20141253005&q=${city}&aqi=no`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("weatherResult").innerHTML = `<h4 style="color: red;">${city} not found</h4>`;
+                    alert("Please enter a valid city name");
+                } else {
+                    document.getElementById("weatherResult").innerHTML = `Weather in ${city}: ${data.current.condition.text}`;
+                    document.getElementById("weatherResult").innerHTML = `<img src="https:${data.current.condition.icon}" alt no>`;
+                    document.getElementById("weatherDetails").innerHTML = `${data.location.country} - ${data.location.region} on ${data.location.localtime}`;
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        });
+    </script>
+</body>
+</html>
