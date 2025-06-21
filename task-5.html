@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple E-Commerce</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background-color: #0f3460;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header input {
+      padding: 0.5rem;
+      width: 200px;
+      border-radius: 4px;
+      border: none;
+    }
+    nav {
+      background: #e3e3e3;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.5rem;
+    }
+    nav button {
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      border: none;
+      background: white;
+      border-radius: 5px;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    .product {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1rem;
+      width: 220px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .product button {
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      border: none;
+      background: #0f3460;
+      color: white;
+      border-radius: 5px;
+    }
+    .cart-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 300px;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+      padding: 1rem;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      z-index: 999;
+    }
+    .cart-panel.open {
+      transform: translateX(0);
+    }
+    .modal, .overlay {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+    }
+    .modal {
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; padding: 2rem; border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+    .overlay {
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>ShopNow</h2>
+    <input type="text" id="searchInput" placeholder="Search..." oninput="renderProducts()" />
+    <button onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
+  </header>
+
+  <nav>
+    <button onclick="setCategory('all')">All</button>
+    <button onclick="setCategory('electronics')">Electronics</button>
+    <button onclick="setCategory('clothing')">Clothing</button>
+  </nav>
+
+  <div class="products" id="productList"></div>
+
+  <div class="cart-panel" id="cartPanel">
+    <h3>Your Cart</h3>
+    <div id="cartItems"></div>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeModal()"></div>
+  <div class="modal" id="checkoutModal">
+    <h3>Checkout Complete!</h3>
+    <p>Your order has been placed successfully.</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+
+  <script>
+    const products = [
+      {
+        name: "HP Laptop",
+        price: 50000,
+        category: "electronics",
+        image: "https://m.media-amazon.com/images/I/71X4sDOWntL._AC_SL1500_.jpg"
+      },
+      {
+        name: "Noise Wireless Earbuds",
+        price: 1599,
+        category: "electronics",
+        image: "https://m.media-amazon.com/images/I/61K3LTkKsmL._SL1500_.jpg"
+      },
+      {
+        name: "Men's Cotton T-shirt",
+        price: 499,
+        category: "clothing",
+        image: "https://m.media-amazon.com/images/I/61fZC+4rG7L._UX679_.jpg"
+      },
+      {
+        name: "Jeans Pant",
+        price: 999,
+        category: "clothing",
+        image: "https://m.media-amazon.com/images/I/61eVdxS8UeL._UX522_.jpg"
+      },
+      {
+        name: "Samsung Galaxy M14",
+        price: 10999,
+        category: "electronics",
+        image: "https://m.media-amazon.com/images/I/81ZSn2rk9WL._SL1500_.jpg"
+      },
+      {
+        name: "Printed Hoodie",
+        price: 899,
+        category: "clothing",
+        image: "https://m.media-amazon.com/images/I/61JbUlnRDSL._UX679_.jpg"
+      }
+    ];
+
+    let selectedCategory = "all";
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const container = document.getElementById("productList");
+      container.innerHTML = "";
+      products
+        .filter(p => (selectedCategory === "all" || p.category === selectedCategory))
+        .filter(p => p.name.toLowerCase().includes(query))
+        .forEach(p => {
+          container.innerHTML += `
+            <div class="product">
+              <img src="${p.image}" alt="${p.name}">
+              <h4>${p.name}</h4>
+              <p>₹${p.price}</p>
+              <button onclick="addToCart('${p.name}')">Add to Cart</button>
+              <button onclick="buyNow('${p.name}')">Buy Now</button>
+            </div>
+          `;
+        });
+    }
+
+    function addToCart(name) {
+      const existing = cart.find(p => p.name === name);
+      if (existing) existing.qty++;
+      else cart.push({ name, qty: 1 });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function buyNow(name) {
+      const item = cart.find(p => p.name === name);
+      if (!item) cart.push({ name, qty: 1 });
+      showModal();
+    }
+
+    function toggleCart() {
+      document.getElementById("cartPanel").classList.toggle("open");
+      renderCartItems();
+    }
+
+    function renderCartItems() {
+      const items = document.getElementById("cartItems");
+      items.innerHTML = "";
+      cart.forEach((p, i) => {
+        items.innerHTML += `
+          <p>${p.name} x${p.qty} 
+            <button onclick="changeQty(${i}, 1)">+</button>
+            <button onclick="changeQty(${i}, -1)">-</button>
+          </p>
+        `;
+      });
+    }
+
+    function changeQty(i, delta) {
+      cart[i].qty += delta;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCartItems();
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById("cartCount").innerText = cart.reduce((sum, p) => sum + p.qty, 0);
+    }
+
+    function checkout() {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      orders.push(...cart);
+      localStorage.setItem("orders", JSON.stringify(orders));
+      cart = [];
+      localStorage.removeItem("cart");
+      updateCartUI();
+      renderCartItems();
+      showModal();
+    }
+
+    function showModal() {
+      document.getElementById("checkoutModal").style.display = "block";
+      document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("checkoutModal").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    renderProducts();
+    updateCartUI();
+  </script>
+</body>
+</html>
